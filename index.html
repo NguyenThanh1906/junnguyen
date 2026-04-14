@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jun Nguyen-Hatsushiba</title>
+    <style>
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Times New Roman', serif;
+            background-color: #0d0d0d;
+            color: #f5f5f5;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        .sans {
+            font-family: Arial, sans-serif;
+        }
+        .serif {
+            font-family: 'Dancing Script', serif;
+            font-size: 85px;
+            font-style: italic;
+        }
+        /* Loader */
+        #loader {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #0d0d0d;
+            z-index: 100;
+            opacity: 1;
+            transition: opacity 0.8s ease;
+        }
+        #loader.fade-out {
+            opacity: 0;
+        }
+        /* Nav */
+        #nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            transition: all 0.5s ease;
+            background: transparent;
+            backdrop-filter: none;
+            border-bottom: 1px solid transparent;
+        }
+        #nav.scrolled {
+            background: rgba(13,13,13,0.88);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        #nav .accent-bar {
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(to right, transparent, rgba(245,245,245,0.2), transparent);
+        }
+        #nav .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 72px;
+        }
+        #nav .nav-links a {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            color: #aaa;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        #nav .nav-links a:hover {
+            color: #f5f5f5;
+        }
+        #nav .wordmark {
+            font-weight: bold;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Times New Roman', serif;
+            font-size: 24px;
+            letter-spacing: 0.25em;
+            color: #f5f5f5;
+        }
+        @media (max-width: 767px) {
+    #nav .wordmark {
+        font-size: 14px;
+        letter-spacing: 0.08em;
+        white-space: nowrap;
+    }
+}
+@media (max-width: 767px) {
+    #nav .nav-container {
+        justify-content: space-between;
+    }
+
+    #nav .wordmark {
+        position: static;
+        transform: none;
+        font-size: 12px;
+        letter-spacing: 0.12em;
+    }
+}
+        /* Hero */
+        #hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 88px 24px 0;
+        }
+        #hero .hero-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 103%;
+        }
+        #hero h1 {
+            font-size: 14vw;
+            line-height: 0.8;
+            letter-spacing: -0.02em;
+            background: linear-gradient(to bottom, #f5f5f5, #666);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            overflow: hidden;
+        }
+        #hero .timeless {
+            padding: 44px;
+            transform: translateY(100%);
+            opacity: 0;
+            animation: slideUp 1.2s ease forwards;
+        }
+        #hero .art {
+
+            padding: 60px;
+            margin-top: -1vw;
+            text-align: right;
+            font-style: italic;
+            transform: translateY(100%);
+            opacity: 0;
+            animation: slideUp 1.2s ease forwards 0.2s;
+        }
+        @media (max-width: 767px) {
+    #hero {
+        padding: 120px 18px 0;
+    }
+
+    #hero h1 {
+        font-size: 16vw;
+        line-height: 0.9;
+    }
+
+    #hero .timeless {
+        padding: 10px;
+    }
+
+    #hero .art {
+        padding: 10px;
+    }
+}
+        @keyframes slideUp {
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        /* Image Reveal */
+        #image-reveal {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+        #image-reveal img {
+            width: 100%;
+            height: 100%;
+            object-fit: none;
+            object-position: center;
+            transform: scale(1.3);
+            transition: transform 1.8s ease;
+        }
+        #image-reveal.in-view img {
+            transform: scale(1);
+        }
+        /* Text Block */
+        #text-block {
+            width: 100%;
+            padding: 128px 24px;
+        }
+        #text-block .content {
+            /* max-width: 1400px; */
+            margin: 0px 46px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 48px;
+            align-items: center;
+        }
+        #text-block h2 {
+            text-align: center;
+            font-size: 48px;
+            line-height: 1.2;
+            color: #f5f5f5;
+            transform: translateY(30px);
+            opacity: 0;
+            transition: all 1s ease;
+        }
+        #text-block p {
+            font-size: 24px;
+            font-style: italic;
+            color: #a3a3a3;
+            text-align: justify;
+            transform: translateY(30px);
+            opacity: 0;
+            transition: all 1s ease 0.2s;
+        }
+        @media (max-width: 767px) {
+    #text-block {
+        padding: 80px 18px;
+    }
+
+    #text-block h2 {
+        font-size: 28px;
+    }
+
+    #text-block p {
+        font-size: 16px;
+        line-height: 1.8;
+    }
+}
+        #text-block.in-view h2,
+        #text-block.in-view p {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        /* Editorial Text */
+        #editorial-text {
+            width: 100%;
+            padding: 85px 24px;
+        }
+        #editorial-text .content {
+            max-width: 1400px;
+            margin: 27px auto;
+        }
+        #editorial-text .rule {
+            width: 100%;
+            height: 1px;
+            background-color: #222;
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 1.2s ease;
+        }
+        #editorial-text.in-view .rule {
+            transform: scaleX(1);
+        }
+        #editorial-text .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 61px;
+        }
+        #editorial-text .label {
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.4em;
+            color: #444;
+            margin-top: 8px;
+        }
+        #editorial-text .pull-quote h2 {
+            font-size: 38px;
+            line-height: 1.15;
+            color: #f5f5f5;
+        }
+        #editorial-text .pull-quote .italic {
+            font-style: italic;
+            color: #888;
+        }
+        #editorial-text .body-copy {
+            max-width: 607px;
+        }
+        #editorial-text .body-copy p {
+            text-align: justify;
+            font-family: math;
+            font-weight: 300;
+            color: #888;
+            font-size: 14px;
+            line-height: 2.5;
+        }
+        #editorial-text .stats {
+            display: flex;
+            gap: 40px;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid #1e1e1e;
+        }
+        #editorial-text .stat .value {
+            font-size: 24px;
+            color: #f5f5f5;
+        }
+        #editorial-text .stat .label {
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            color: #444;
+            margin-top: 4px;
+        }
+        /* Gallery Grid */
+        #gallery-grid {
+            width: 100%;
+            /* padding: 128px 24px; */
+        }
+        #gallery-grid .content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 24px;
+            align-items: stretch;
+        }
+        #gallery-grid .item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            min-height: 260px;
+        }
+        #gallery-grid .item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            transition: transform 0.8s ease, filter 0.8s ease;
+            filter: grayscale(100%);
+        }
+        #gallery-grid .item:hover img {
+            transform: scale(1.05);
+            filter: grayscale(0);
+        }
+        #gallery-grid .item.big {
+            grid-column: span 8;
+            grid-row: span 2;
+            min-height: 520px;
+        }
+        #gallery-grid .item.tall {
+            grid-column: span 4;
+            grid-row: span 2;
+            min-height: 520px;
+        }
+        #gallery-grid .item.small {
+            grid-column: span 4;
+            min-height: 320px;
+        }
+        #gallery-grid .item.center {
+            grid-column: span 4;
+            min-height: 360px;
+        }
+        @media (max-width: 1024px) {
+            #gallery-grid .content {
+                grid-template-columns: repeat(6, 1fr);
+            }
+            #gallery-grid .item.big,
+            #gallery-grid .item.tall {
+                grid-column: span 6;
+                grid-row: auto;
+                min-height: 360px;
+            }
+            #gallery-grid .item.small,
+            #gallery-grid .item.center {
+                grid-column: span 6;
+            }
+        }
+        @media (max-width: 767px) {
+            #gallery-grid {
+                padding: 96px 18px;
+            }
+            #gallery-grid .content {
+                grid-template-columns: 1fr;
+            }
+            #gallery-grid .item {
+                min-height: 260px;
+            }
+        }
+        /* Visionary Artists */
+        #visionary-artists {
+            width: 100%;
+            padding: 128px 0;
+            overflow: hidden;
+        }
+        #visionary-artists .header {
+            padding: 0 24px;
+            margin-bottom: 64px;
+        }
+        #visionary-artists .title {
+            font-weight: 700;
+            font-family: emoji;
+            font-size: 17px;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: #a3a3a3;
+        }
+       #visionary-artists .artists {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: calc((100% - 72px) / 4); /* 4 card đều */
+    gap: 24px;
+    padding: 0 24px;
+    overflow-x: auto;
+
+    scroll-snap-type: x mandatory;
+}
+       #visionary-artists .artists::-webkit-scrollbar {
+    height: 6px;
+}
+#visionary-artists .artists::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 10px;
+}
+#visionary-artists .artist:hover {
+    transform: translateY(-6px);
+    transition: 0.3s;
+}
+        #visionary-artists .artist {
+        width: 100%;
+    aspect-ratio: 3/4;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+
+    scroll-snap-align: start;
+        }
+        @media (max-width: 1024px) {
+    #visionary-artists .artists {
+        grid-auto-columns: calc((100% - 48px) / 2); /* 2 card */
+    }
+}
+
+@media (max-width: 767px) {
+    #visionary-artists .artists {
+        grid-auto-columns: 80%; /* 1 card lớn */
+    }
+}
+        #visionary-artists .artist img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            filter: grayscale(100%);
+            transition: all 0.5s ease;
+        }
+        #visionary-artists .artist:hover img {
+            filter: grayscale(0);
+            transform: scale(1.05);
+        }
+        #visionary-artists .artist .overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 24px;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+        }
+        #visionary-artists .artist h3 {
+            font-size: 24px;
+            color: white;
+            margin-bottom: 4px;
+        }
+        #visionary-artists .artist p {
+            font-family: Arial, sans-serif;
+            font-weight: 300;
+            font-size: 14px;
+            color: #a3a3a3;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        /* Artwork Collection */
+        #artwork-collection {
+            width: 100%;
+            padding: 160px 24px;
+        }
+        #artwork-collection .content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        #artwork-collection .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 24px;
+            margin-bottom: 80px;
+        }
+        #artwork-collection .header p {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            color: #555;
+            margin-bottom: 16px;
+            max-width: 320px;
+        }
+        #artwork-collection .header h2 {
+            font-size: 48px;
+            line-height: 1.1;
+            color: #f5f5f5;
+        }
+        #artwork-collection .description {
+            font-family: Arial, sans-serif;
+            font-weight: 300;
+            font-size: 14px;
+            color: #555;
+            font-style: italic;
+            text-align: right;
+            max-width: 200px;
+            line-height: 1.5;
+        }
+        #artwork-collection .grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 16px;
+        }
+        #artwork-collection .card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 4px;
+            cursor: pointer;
+            aspect-ratio: 4/5;
+        }
+        #artwork-collection .card.wide {
+            aspect-ratio: 16/9;
+        }
+        #artwork-collection .card.tall {
+            aspect-ratio: 3/4;
+        }
+        #artwork-collection .card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            filter: grayscale(100%);
+            transition: all 0.7s ease;
+            transform: scale(1.1);
+            opacity: 1;
+        }
+        #artwork-collection .card.in-view img {
+            transform: scale(1);
+            opacity: 1;
+        }
+        #artwork-collection .card:hover img {
+            filter: grayscale(0);
+        }
+        #artwork-collection .card .overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(13,13,13,0.9), rgba(13,13,13,0.2), transparent);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 0.35s ease;
+        }
+        #artwork-collection .card .overlay.right {
+            align-items: flex-end;
+            text-align: right;
+        }
+        #artwork-collection .card:hover .overlay {
+            opacity: 1;
+        }
+        #artwork-collection .card .medium {
+            font-family: Arial, sans-serif;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.25em;
+            color: #a3a3a3;
+            margin-bottom: 8px;
+        }
+        #artwork-collection .card h3 {
+            font-size: 20px;
+            color: #f5f5f5;
+            line-height: 1.2;
+        }
+        #artwork-collection .card .artist {
+            font-family: Arial, sans-serif;
+            font-weight: 300;
+            font-size: 14px;
+            color: #a3a3a3;
+            margin-top: 4px;
+        }
+        #artwork-collection .card.mt-96 {
+            margin-top: 96px;
+        }
+        #artwork-collection .card.mt-24 {
+            margin-top: 24px;
+        }
+        #artwork-collection .card.mt-neg-80 {
+            margin-top: -80px;
+        }
+        #artwork-collection .card.mt-neg-60 {
+            margin-top: -60px;
+        }
+        #artwork-collection .card.col-start-4 {
+            grid-column-start: 4;
+        }
+
+        /* Artist Bio */
+        #artist-bio {
+            width: 100%;
+            padding: 16px 24px 140px;
+        }
+        #artist-bio .content {
+            max-width: 1122px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1.4fr 0.6fr;
+            gap: 120px;
+            align-items: start;
+        }
+        #artist-bio h2 {
+            font-size: 54px;
+            line-height: 1.25;
+            color: #f5f5f5;
+            margin: 55px;
+            letter-spacing: -0.02em;
+            max-width: 540px;
+        }
+        #artist-bio .italic {
+            font-style: italic;
+            color: #a3a3a3;
+            opacity: 0.9;
+        }
+        #artist-bio .text {
+            display: grid;
+            gap: 19px;
+            padding-top: 18px;
+            justify-content: start;
+            max-width: 520px;
+        }
+        #artist-bio p {
+            text-align: justify;
+            font-family: math;
+            font-weight: 300;
+            color: #d4d4d4;
+            font-size: 1.05rem;
+            line-height: 2.1;
+            max-width: 100%;
+        }
+        @media (max-width: 1024px) {
+            #artist-bio .content {
+                grid-template-columns: 1fr;
+                gap: 64px;
+            }
+            #artist-bio .text {
+                padding-top: 0;
+            }
+            #artist-bio p {
+                font-size: 1rem;
+                max-width: 100%;
+            }
+        }
+        @media (max-width: 767px) {
+            #artist-bio {
+                padding: 120px 18px;
+            }
+            #artist-bio h2 {
+                font-size: 3rem;
+            }
+        }
+        @media (max-width: 767px) {
+    #artwork-collection {
+        padding: 100px 18px;
+    }
+
+    #artwork-collection .header {
+        gap: 12px;
+    }
+
+    #artwork-collection .header h2 {
+        font-size: 28px;
+    }
+
+    #artwork-collection .grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    #artwork-collection .card {
+        margin: 0 !important;
+    }
+}
+        /* Footer */
+        #footer {
+            width: 100%;
+            padding: 64px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-top: 1px solid #1a1a1a;
+        }
+        #footer .logo {
+            font-size: 24px;
+            margin-bottom: 16px;
+            font-style: italic;
+        }
+        #footer p {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: #666;
+            margin-bottom: 8px;
+        }
+        #footer .subtitle {
+            font-size: 10px;
+            letter-spacing: 0.3em;
+            color: #444;
+        }
+        /* Responsive */
+        @media (min-width: 768px) {
+            #hero h1 {
+                font-size: 186px;
+            }
+            #text-block .content {
+                /* grid-template-columns: 1fr 1fr; */
+            }
+            #editorial-text .grid {
+                /* grid-template-columns: repeat(12, 1fr); */
+            }
+            #editorial-text .label {
+                grid-column: span 1;
+            }
+            #editorial-text .pull-quote {
+                grid-column: span 4;
+            }
+            #editorial-text .body-copy {
+                grid-column: span 4;
+                grid-column-start: 6;
+            }
+            #gallery-grid .col-4 {
+                grid-column: span 4;
+            }
+            #gallery-grid .col-6 {
+                grid-column: span 6;
+                grid-column-start: 7;
+            }
+                
+            #artwork-collection .description {
+                display: block;
+            }
+            #artist-bio .content {
+                grid-template-columns: repeat(1, 6fr);
+                gap: 13px;
+            }
+            #artist-bio h2 {
+                grid-column: span 6;
+            }
+            #artist-bio .text {
+                grid-column: span 5;
+                grid-column-start: 8;
+            }
+        }
+        
+        @media (max-width: 767px) {
+            #gallery-grid .content {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            #gallery-grid .item {
+                aspect-ratio: 4/3;
+            }
+            #editorial-text .grid {
+                grid-template-columns: 1fr;
+                gap: 32px;
+            }
+            #editorial-text .pull-quote {
+                order: -1;
+            }
+            #artwork-collection .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+            #artwork-collection .description {
+                text-align: left;
+                max-width: none;
+            }
+            #artist-bio .content {
+                grid-template-columns: 1fr;
+                gap: 32px;
+            }
+        }
+        #img-view{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.95);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:999;
+
+    opacity:0;
+    pointer-events:none;
+    transition:0.3s;
+}
+
+#img-view.active{
+    opacity:1;
+    pointer-events:auto;
+}
+
+#img-full{
+    max-width:90%;
+    max-height:90%;
+    object-fit:contain;
+}
+
+#img-close{
+    position:absolute;
+    top:20px;
+    right:20px;
+    font-size:32px;
+    color:white;
+    cursor:pointer;
+}
+@media (max-width: 767px) {
+    #gallery-grid .content {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    #gallery-grid .item {
+        aspect-ratio: 4/5;
+        border-radius: 6px;
+    }
+}
+    </style>
+</head>
+<body>
+    <!-- Loader -->
+    <div id="loader">
+        <h1 class="serif">Nguyên Thanh</h1>
+    </div>
+    <div id="img-view">
+    <span id="img-close">×</span>
+    <img id="img-full">
+</div>
+
+    <!-- Main Content -->
+    <div id="main" style="opacity: 0; transition: opacity 1s ease;">
+        <!-- Nav -->
+        <header id="nav">
+            <div class="accent-bar"></div>
+            <div class="nav-container">
+                <nav class="nav-links">
+                    <a href="#">Gallery</a>
+                    <a href="#">Artist</a>
+                </nav>
+                <div class="wordmark">JUN NGUYEN-HATSUSHIBA</div>
+            </div>
+        </header>
+
+        <!-- Hero -->
+        <section id="hero">
+            <div class="hero-content">
+                <h1 class="timeless">Photographic</h1>
+                <h1 class="art">Journey</h1>
+            </div>
+        </section>
+
+        <!-- Image Reveal -->
+        <section id="image-reveal">
+            <img src="https://images.squarespace-cdn.com/content/v1/5f529c4818ea7741601b9122/1621657676773-57MDCYTCKS8QHQA7SYIV/20140227_DanceBoxOsaka_1120085_s.jpg">
+        </section>
+
+        <!-- Text Block -->
+        <section id="text-block">
+            <div class="content">
+                <h2>Biographical Summary</h2>
+                <p>Jun Nguyen-Hatsushiba is a prominent global artist of Vietnamese and Japanese descent, educated at the School of the Art Institute of Chicago and the Maryland Institute College of Art. After spending nearly two decades working in Vietnam, he is currently based in Houston, Texas. His diverse cultural background and education have shaped a career spanning 25 years, characterized by a deep exploration of historical memory and social issues.</p>
+                <p>He rose to international acclaim in 2001 through a series of evocative underwater films that serve as "memorial projects." These works address significant historical traumas, including the Tet Offensive, the Minamata Disease in Japan, and the 1972 Christmas Bombings of North Vietnam. Over time, his practice has expanded to include films set on the Mekong River, large-scale installations, and his ongoing project Breathing is Free: 12,756.3, where he runs the distance of the Earth’s diameter to raise awareness for the global refugee crisis.</p>
+                <p>The artist's work is celebrated for its ability to weave together local history and unconventional metaphors into a cohesive contemporary context. His influence is cemented by participation in major world biennials and triennials, such as those in Venice and Sao Paulo. Today, his pieces are held in some of the world's most prestigious public collections, including the Guggenheim Museum in New York, the Centre Georges Pompidou in Paris, and the Mori Art Museum in Tokyo.</p>
+            </div>
+        </section>
+
+        <!-- Editorial Text -->
+        <section id="editorial-text">
+            <div class="content">
+                <div class="rule"></div>
+                <div class="grid">
+                    <div class="label">To my mind</div>
+                    <div class="pull-quote">
+                        <h2>My impressions<br /><span class="italic">of the teacher's works.</span></h2>
+                    </div>
+                    <div class="body-copy">
+                        <p>Theo quan điểm của em, các tác phẩm của Jun Nguyen-Hatsushiba gây ấn tượng mạnh bởi hình ảnh độc đáo và mang tính trừu tượng cao. Thầy không lựa chọn cách thể hiện quen thuộc, mà thường sử dụng những hình ảnh ẩn dụ kết hợp với nhiều chất liệu và ý tưởng mới mẻ. Chính điều này tạo nên một trải nghiệm thị giác khác biệt, khiến người xem không chỉ dừng lại ở việc quan sát mà còn phải suy nghĩ và tự tìm kiếm ý nghĩa ẩn sau tác phẩm.</p>
+
+                        <p>Em cảm thấy chính sự độc lạ trong cách xây dựng hình ảnh và ý tưởng đã tạo nên dấu ấn cá nhân rất rõ nét của Thầy. Mỗi tác phẩm không chỉ là một hình ảnh đơn thuần, mà giống như một “không gian mở”, nơi nhiều lớp ý nghĩa được chồng xếp và gợi mở. Nhờ đó, người xem có thể tiếp cận tác phẩm từ nhiều góc nhìn khác nhau, tùy thuộc vào cảm nhận và trải nghiệm cá nhân của mình.</p>
+
+                        <p>Với em, giá trị đặc biệt trong các tác phẩm của Thầy không nằm ở yếu tố “đẹp” hay “dễ hiểu”, mà ở khả năng khơi gợi tư duy. Tác phẩm buộc người xem phải tự đặt câu hỏi, suy ngẫm về những điều tưởng chừng quen thuộc trong cuộc sống, từ đó nhận ra những tầng ý nghĩa sâu sắc hơn ẩn phía sau hình ảnh.</p>
+                        <div>
+                        </div> 
+                        </div>
+                    </div>
+                </div>
+                <div class="rule"></div>
+            </div>
+        </section>
+
+        <!-- Gallery Grid -->
+        <section id="gallery-grid">
+            <section id="editorial-text">
+                <div class="pull-quote">
+                    <h2>
+Memorial Project Nha Trang, Vietnam: Towards the Complex – For the Courageous, the Curious, and the Cowards (2001)</h2>
+                </div>
+
+            </section>
+            <div class="content">
+                   
+                <div class="item big">
+                    <img src="https://i.pinimg.com/736x/57/8a/dd/578add5b9891fe98bf63aa38c82e3eda.jpg" alt="Art gallery interior">
+                </div>
+                <div class="item tall">
+                    <img src="https://i.pinimg.com/736x/8a/e9/cf/8ae9cf4a80b0e863ea04d1f3d4f8681c.jpg" alt="Notebook sketch">
+                </div>
+                <div class="item small">
+                    <img src="https://i.pinimg.com/1200x/46/4c/84/464c8422fdfba9fcac78a31e89eee062.jpg" alt="Abstract artwork">
+                </div>
+                <div class="item center">
+                    <img src="https://kadist.org/wp-content/uploads/2016/04/img-50.jpg" alt="Artist portrait">
+                </div>
+                <div class="item small">
+                    <img src="https://files.ocula.com/anzax/91/91bbbf89-140e-4654-928f-19742388198e_1200_900.jpg" alt="Monochrome painting">
+                </div>
+            </div>
+        </section>
+
+        <!-- Visionary Artists -->
+        <section id="visionary-artists">
+            <div class="header">
+                <h2 class="title">The Collection Major Works from 2010-2021</h2>
+            </div>
+            <div class="artists">
+                <div class="artist">
+                    <img src="https://mizuma-art.co.jp/wp/wp-content/uploads/2018/01/globe-project_DSC3302a.jpg">
+                    <div class="overlay">
+                        <h3>The Globe Project: The Garden of Globes</h3>
+                        <p>2007</p>
+                    </div>
+                </div>
+                <div class="artist">
+                    <img src="https://mizuma-art.co.jp/wp/wp-content/uploads/2018/01/10Chicago_day_scence.jpg" alt="Laila Abassi">
+                    <div class="overlay">
+                        <h3>Breathing is Free: 12,756.3 - Chicago Microscope (A Self-portrait), 88.5km</h3>
+                        <p>2010</p>
+                    </div>
+                </div>
+                <div class="artist">
+                    <img src="https://mizuma-art.co.jp/wp/wp-content/uploads/2018/01/10shanghai.jpg" alt="Mateo Santiago">
+                    <div class="overlay">
+                        <h3>49 METERS 49 TIMES: A REHEARSAL WITH ENTITIES IN SHANGHAI</h3>
+                        <p>2010</p>
+                    </div>
+                </div>
+                <div class="artist">
+                    <img src="https://mizuma-art.co.jp/wp/wp-content/uploads/2018/01/09Cabbage-family.jpg" alt="Ayaka Mori">
+                    <div class="overlay">
+                        <h3>Bruises Under Conscience - A Portrait</h3>
+                        <p>2022</p>
+                    </div>
+                </div>
+                <div class="artist">
+                    <img src="https://mizuma-art.co.jp/wp/wp-content/uploads/2018/01/10picnic.jpg" alt="Noah Klein">
+                    <div class="overlay">
+                        <h3>A Picnic under the Sugar Palm and the Bodhi Tree</h3>
+                        <p>2010</p>
+                    </div>
+                </div>
+                <div class="artist">
+                    <img src="https://mizuma-art.co.jp/wp/wp-content/uploads/2018/01/10_thankyou_mizuma_exhibition.jpg" alt="Sophia Lin">
+                    <div class="overlay">
+                        <h3>Breathing is Free: 12,756.3 - Chicago Microscope (A Self-portrait), 88.5km</h3>
+                        <p>2010</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Artwork Collection -->
+        <section id="artwork-collection">
+            <div class="content">
+                <div class="header">
+                    <div>
+                        <p>The Collection</p>
+                        <h2>While I am Dead - A Prelude to Life</h2>
+                    </div>
+                    <p class="description">" They are self-portraits during nearly a decade of absence from my practice in the art world."</p>
+                </div>
+                <div class="grid">
+                    <!-- Row 1 -->
+                    <div class="card" style="grid-column: span 5;">
+                        <img src="https://photos.lensculture.com/large/7c1a3853-4629-45ec-9d5f-c915dcee9c72.jpg">
+                        <div class="overlay">
+                            <div class="medium">2021</div>
+                            <h3>Bodhisattva in my okra garden</h3>
+                            <div class="artist">JUN NGUYEN - HATSUSHIBA</div>
+                        </div>
+                    </div>
+                    <div class="card mt-96" style="grid-column: span 3;">
+                        <img src="https://photos.lensculture.com/large/788066d4-425f-4589-aa2f-5a01fcfe91ac.jpg">
+                        <div class="overlay">
+                            <div class="medium">2021</div>
+                            <h3>Mr. Stairs</h3>
+                            <div class="artist">JUN NGUYEN - HATSUSHIBA</div>
+                        </div>
+                    </div>
+                    <div class="card" style="grid-column: span 4;">
+                        <img src="https://photos.lensculture.com/large/a6cb673c-3aef-4549-85d4-dd82168648d2.jpg" alt="Void Study III">
+                        <div class="overlay">
+                            <div class="medium">2021</div>
+                            <h3>Trees Grow from the Ground 2</h3>
+                            <div class="artist">JUN NGUYEN -HATSUSHIBA</div>
+                        </div>
+                    </div>
+                    <!-- Row 2 -->
+                    <div class="card wide mt-24" style="grid-column: span 7;">
+                        <img src="https://d7hftxdivxxvm.cloudfront.net/?height=296&quality=85&resize_to=fit&src=https%3A%2F%2Fd32dm0rphc51dk.cloudfront.net%2FMQ0pdmEWLXHl0FVBgSYI1w%2Flarger.jpg&width=445">
+                        <div class="overlay">
+                            <div class="medium">2021</div>
+                            <h3>Are we capable to speak to multiple thoughts of a person at once? Perhaps yes</h3>
+                            <div class="artist">JUN NGUYEN -HATSUSHIBA</div>
+                        </div>
+                    </div>
+                    <div class="card mt-neg-80" style="grid-column: span 5;">
+                        <img src="https://photos.lensculture.com/large/7eafb4d2-4e7c-4ca5-9119-58ca708091b7.jpg" alt="Cartography of Loss">
+                        <div class="overlay right">
+                            <div class="medium">2021</div>
+                            <h3>The meeting place. The shadowless visiting my kitchen</h3>
+                            <div class="artist">JUN NGUYEN- HATSUSHIBA</div>
+                        </div>
+                    </div>
+                    <!-- Row 3 -->
+                    <div class="card mt-24" style="grid-column: span 3;">
+                        <img src="https://photos.lensculture.com/large/fe3baf1e-6aba-4249-9af0-25e9c552b327.jpg" alt="Silent Archive">
+                        <div class="overlay">
+                            <div class="medium">2021</div>
+                            <h3>A temporary canvas for a temporary moment</h3>
+                            <div class="artist">JUN NGUYEN - HATSUSHIBA</div>
+                        </div>
+                    </div>
+                    <div class="card tall col-start-4 mt-neg-60" style="grid-column: span 5;">
+                        <img src="https://photos.lensculture.com/large/a7d273e1-df73-4d24-9674-f3243aea7d1e.jpg" alt="Between Two Shores">
+                        <div class="overlay">
+                            <div class="medium">2021</div>
+                            <h3>Saturated Reality. A train trip to Tokyo</h3>
+                            <div class="artist">JUN NGUYEN -HATSUSHIBA</div>
+                        </div>
+                    </div>
+                    <div class="card wide mt-24" style="grid-column: span 4;">
+                        <img src="https://photos.lensculture.com/large/931038ed-acb5-401f-8c80-23ab720b6cbd.jpg">
+                        <div class="overlay">
+                            <div class="medium">2021</div>
+                            <h3>Surrounded by the things I cannot see</h3>
+                            <div class="artist">JUN NGUYEN -HATSUSHIBA</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Artist Bio -->
+        <section id="artist-bio">
+            <div class="content">
+                <div>
+                    <h2>While I am Dead <br /><span class="italic"> A Prelude to Life</span></h2>
+                </div>
+                <div class="text">
+                    <p>Đây là triển lãm em ấn tượng và thích nhất khi nghiên cứu về các tác phẩm của thầy trong đó tác phẩm “Bodhisattva in my okra garden”, khi nhìn vào hình ảnh này, em không thấy đây chỉ là một bông hoa, mà là ẩn dụ cho một người phụ nữ đang tồn tại trong trạng thái rất mong manh, phần đầu cúi nhẹ như đang nhún nhường, chịu đựng. Bông hoa chỉ hiện lên qua một viền sáng mỏng trên nền đen, như thể vừa còn đó, vừa đang dần biến mất. Hình dáng của bông hoa không rõ ràng, không có chi tiết cụ thể, trở nên vô danh, không được nhìn nhận như một cá thể riêng biệt. Điều này làm em liên tưởng đến việc nhiều người phụ nữ trong cuộc sống không được nhìn nhận như một cá thể riêng biệt, mà chỉ tồn tại một cách lặng lẽ, mờ nhạt.</p>
+                    <p>Ngoài ra, việc bông hoa dường như đang “tan” vào nền đen khiến em nghĩ đến sự bào mòn theo thời gian. Người phụ nữ ở đây không biến mất ngay lập tức, mà mất dần đimột cách chậm rãi, gần như không ai nhận ra. Đó không phải là một cái “chết” rõ ràng, mà là một quá trình mờ dần – nơi sự hiện diện vẫn còn, nhưng ngày càng yếu đi. Sự đối lập giữa trắng và đen khiến em liên tưởng đến ranh giới giữa sự sống và cái chết.</p>
+                    <p>Người phụ nữ trong hình ảnh này không “chết” theo nghĩa kết thúc, mà giống như đang bị kéo vào một trạng thái vẫn tồn tại nhưng không được nhìn thấy rõ (không được công nhận), không được hiện diện trọn vẹn. Ánh sáng không chiếu vào trực diện, mà chỉ lướt qua bên ngoài (vẻ đẹp của người phụ nữ bị đánh giá qua vẻ bề ngoài). Vì vậy, với em hình ảnh “người phụ nữ” trong tác phẩm không chỉ là biểu tượng của vẻ đẹp mà còn là biểu tượng của sự chịu đựng và tồn tại âm thầm. Họ không biến mất (trong bóng tối) hoàn toàn, nhưng cũng không bao giờ được hiện diện (ngoài ánh sáng) một cách trọn vẹn, luôn nằm ở ranh giới giữa được nhìn thấy và bị lãng quên. Điều làm em suy nghĩ nhiều nhất là cách hình ảnh gợi ra một kiểu tồn tại rất quen thuộc ngoài đời: có những người phụ nữ vẫn sống, vẫn hiện diện, nhưng dần bị bào mòn bởi định kiến.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer id="footer">
+            <div class="logo serif">NT</div>
+            <p>NguyenThanh © 2026</p>
+            <p class="subtitle">Bài tập 3 </p>
+        </footer>
+    </div>
+
+    <script>
+        // Loader
+        setTimeout(() => {
+            document.getElementById('loader').classList.add('fade-out');
+            setTimeout(() => {
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('main').style.opacity = '1';
+            }, 800);
+        }, 2300);
+
+        // Nav scroll effect
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('nav');
+            if (window.scrollY > 60) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '-100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('in-view');
+                }
+            });
+        }, observerOptions);
+
+        // Observe elements
+        document.querySelectorAll('#image-reveal, #text-block, #editorial-text, #gallery-grid .item, #artwork-collection .card').forEach(el => {
+            observer.observe(el);
+        });
+       const allImgs = document.querySelectorAll('img');
+       const view = document.getElementById('img-view');
+       const fullImg = document.getElementById('img-full');
+       const close = document.getElementById('img-close');
+
+allImgs.forEach(img => {
+    img.addEventListener('click', () => {
+        view.classList.add('active');
+        fullImg.src = img.src;
+    });
+});
+
+close.onclick = () => {
+    view.classList.remove('active');
+};
+
+view.onclick = (e) => {
+    if(e.target !== fullImg){
+        view.classList.remove('active');
+    }
+};
+    </script>
+
+</body>
+</html>
